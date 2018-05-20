@@ -7,10 +7,13 @@ Description:
 
 ## TL;DR
 
-- hash-based custom heap
-- faulty implementation -> allocate chunks at attacker-controlled location
-- allocate chunk over GOT
-- overwrite GOT
+- Hash-based custom heap
+
+- Faulty implementation -> allocate chunks at attacker-controlled location
+
+- Allocate chunk over GOT
+
+- Overwrite GOT
 
 ## Analysing the Target
 
@@ -23,7 +26,7 @@ heapy: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically lin
 32-bit binary, dynamically linked, not stripped
 
 ```
-> pwn checksec heapy
+> checksec heapy
 [*] 'heapy'
     Arch:     i386-32-little
     RELRO:    No RELRO
@@ -34,11 +37,11 @@ heapy: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically lin
 All exploit mitigation techniques are turned off: no RELRO, no stack canary, NX and PIE are disabled.
 
 After these checks, we take a look at its functionality; we can:
-- create pastes, specifying their size
-- write to a paste by id (no buffer overflow here)
-- delete a paste by id
-- read a paste by id
-- exit 
+- Create pastes, specifying their size
+- Write to a paste by id (no buffer overflow here)
+- Delete a paste by id
+- Read a paste by id
+- Exit 
 
 After statically analysing the binary, we see that a custom hash-based heap implementation `halloc` is used.
 `halloc` computes a weak hash from the requested size (`(0x9E3779B1 * size) % 0xFFFFFFFF`), interprets this hash as an address, and `mmap`s a chunk there.

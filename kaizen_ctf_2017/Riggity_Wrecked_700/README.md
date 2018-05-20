@@ -9,17 +9,20 @@ Description:
 ## TL;DR
 
 - `strcpy(local_var, argv[2])`
-- submit shellcode in `argv[1]`
-- execute ROP chain to pop from stack until we hit a pointer to the shellcode
-- return into shellcode
+
+- Submit shellcode in `argv[1]`
+
+- Execute ROP chain to pop from stack until we hit a pointer to the shellcode
+
+- Return into shellcode
 
 ## Previous Knowledge
 
 From the previous Coin challenges, we know that
 
-- the `validator` binary is used to validate some user input
+- The `validator` binary is used to validate some user input
 
-- the web page runs the binary with a POST request to `https://anatomypark.kaizen-ctf.com/api/v1/validateInviteCode`, supplying the parameters `name` and `invite`
+- The web page runs the binary with a POST request to `https://anatomypark.kaizen-ctf.com/api/v1/validateInviteCode`, supplying the parameters `name` and `invite`
 
 - `validateInviteCode` effectively calls `system("validator <name> <invite>")`
 
@@ -34,7 +37,7 @@ validator: ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), dynamically
 32-bit binary, dynamically linked, stripped
 
 ```
-> pwn checksec validator
+> checksec validator
 [*] 'validator'
     Arch:     i386-32-little
     RELRO:    No RELRO

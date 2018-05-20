@@ -10,15 +10,15 @@ Description:
 
 ## TL;DR
 
-- we can upload assembly code wich gets executed
+- We can upload assembly code wich gets executed
 
-- seccomp filters prevent us from using most syscalls
+- Seccomp filters prevent us from using most syscalls
 
-- overwrite libc symbols in the assembly to bypass seccomp
+- Overwrite libc symbols in the assembly to bypass seccomp
 
-- leak the remote binary and libc
+- Leak the remote binary and libc
 
-- let the assembly code jump to a magic gadget to get a shell
+- Let the assembly code jump to a magic gadget to get a shell
 
 ## The Task
 
@@ -41,7 +41,7 @@ mov $9999,%rdx;
 syscall
 ```
 
-Increase the amount subtracted from `rsi` until you hit the ELF header, then increase it to leak the first segment of the binary, which contains all of the code.
+Increase the amount subtracted from `rsi` until you hit the ELF header, then decrease it to leak the first segment of the binary, which contains all of the code.
 
 Using the same technique, we can leak the second segment of the binary containing the data, bss and GOT. With the GOT, the string table and the references to the GOT from the code, we can resolve the addresses of `_IO_2_1_stdin_`, `_IO_2_1_stdout_` and `_IO_2_1_stderr_` and use [libc.blukat.me](https://libc.blukat.me/) to find 6 versions of libc with matching offsets.
 
